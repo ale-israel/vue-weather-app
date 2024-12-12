@@ -10,6 +10,7 @@ import { getCityData } from '../utils/get-city-data.ts'
 const cityTabs = ref(['Rio de Janeiro', 'Beijing', 'Los Angeles'])
 
 const selectedCity = ref(null)
+const updatedAt = ref(new Date())
 
 const cityData = ref(null)
 
@@ -42,6 +43,7 @@ const fetchCurrentWeatherData = async () => {
       const data = await weatherService.getCityWeather(lat, lon)
       weather.value = data
       weatherIconUrl.value = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+      updatedAt.value = new Date()
     }
   } catch (err) {
     weatherError.value = err.toString()
@@ -60,7 +62,7 @@ const fetchWeatherForecastData = async () => {
       const { lat, lon } = cityData
       const data = await weatherService.getCityForecast(lat, lon)
       forecast.value = data
-      // forecastIconUrl.value = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+      updatedAt.value = new Date()
     }
   } catch (err) {
     forecastError.value = err.toString()
@@ -86,6 +88,9 @@ watch(cityData, () => fetchWeatherForecastData(), { immediate: true })
     <CurrentWeather :weather="weather" />
     <div class="p-4 w-full bg-white rounded">
       <HoursForecast :forecast="forecast" />
+    </div>
+    <div class="mt-12 -mb-8 flex flex-row justify-end text-xs w-full text-blue-400">
+      Updated at: {{ updatedAt.toLocaleString() }}
     </div>
   </div>
 </template>
