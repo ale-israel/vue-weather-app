@@ -10,12 +10,12 @@ interface City {
   lon: string
 }
 
-export const getCityData = async (city: string) => {
-  const csvFilePath = 'src/assets/cities_20000.csv'
-  const data = (await loadCsv(csvFilePath)) as City[]
+export const getCityData = async (csvFileUrl: string, city: string) => {
+  const data = (await loadCsv(csvFileUrl)) as City[]
 
-  const cityData = data.find(
-    (csvCity) => (csvCity.city_name as string).toLowerCase() === city.toLowerCase(),
+  const cityData = data.find((csvCity) =>
+    (csvCity.city_name as string).toLowerCase().includes(city.toLowerCase()),
   )
+  console.log(city, cityData)
   return cityData
 }
