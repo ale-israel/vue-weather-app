@@ -1,30 +1,34 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
 import { Weather } from '../services/weather-service.ts'
+import { kelvinToCelsius } from '../utils/kelvin-to-celsius.ts'
 
-const props = defineProps<{
+defineProps<{
   weather?: Weather | null
 }>()
 
-const weatherIconUrl = ref(null)
-
-const setWeatherIconUrl = () => {
-  weatherIconUrl.value = `https://openweathermap.org/img/wn/${props.weather.weather[0].icon}@2x.png`
+const getWeatherIconUrl = (icon: string) => {
+  return `https://openweathermap.org/img/wn/${icon}@2x.png`
 }
-
-watch(props.weather, () => setWeatherIconUrl(props.weather), { immediate: true })
 </script>
 
 <template>
-  <div class="flex flex-row items-center justify-center" v-if="weather">
-    <h2 class="text-lg font-normal text-gray-800">
-      {{ weather.weather[0].main }}
-    </h2>
-    <img
-      class="w-16 h-16"
-      v-if="weatherIconUrl"
-      :src="weatherIconUrl"
-      alt="{{weather.weather[0].main}}"
-    />
+  <div class="w-24 mx-auto flex flex-col items-center">
+    <div>
+      <div class="flex flex-row items-center justify-center" v-if="weather">
+        <img
+          class="w-24 h-24"
+          v-if="getWeatherIconUrl(weather.weather[0].icon)"
+          :src="getWeatherIconUrl(weather.weather[0].icon)"
+          alt="{{weather.weather[0].main}}"
+        />
+      </div>
+    </div>
+    <div class="flex flex-row gap-x-0">
+      <div>{{ kelvinToCelsius(weather.main.temp) }}</div>
+      <div>ºC</div>
+    </div>
+    <div>
+      <span class="text-blue-300">{{ weather.rain ? weather.rain['3h'] * 100 : 0 }} %</span>
+    </div>
   </div>
 </template>

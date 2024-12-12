@@ -80,15 +80,22 @@ watch(cityData, () => fetchWeatherForecastData(), { immediate: true })
 <template>
   <div class="p-12 flex flex-col justify-start items-center rounded max-w-md mx-auto bg-blue-50">
     <TabsMenu :tabs="cityTabs" :selectedCity="selectedCity" :setSelectedCity="setSelectedCity" />
-    <h1 class="text-2xl font-medium mb-8 w-full text-center">{{ selectedCity }}</h1>
     <div v-if="weatherLoading" class="p-4">
       <SpinnerLoader />
     </div>
     <div v-if="weatherError" class="bg-red-50 rounded p-4 text-red-500">{{ weatherError }}</div>
-    <CurrentWeather :weather="weather" />
+
+    <div class="p-4 w-full bg-white rounded">
+      <h1 class="text-2xl font-medium mb-2 w-full text-center">{{ selectedCity }}</h1>
+      <CurrentWeather :weather="weather" />
+    </div>
+
+    <div class="w-full my-2" />
+
     <div class="p-4 w-full bg-white rounded">
       <HoursForecast :forecast="forecast" />
     </div>
+
     <div class="mt-12 -mb-8 flex flex-row justify-end text-xs w-full text-blue-400">
       Updated at: {{ updatedAt.toLocaleString() }}
     </div>
