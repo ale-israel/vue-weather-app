@@ -16,18 +16,15 @@ const setSelectedCity = (newCityValue) => {
   selectedCity.value = newCityValue
 }
 
-const fetchCurrentWeatherData = async (cityName) => {
-  console.log(cityName)
+const fetchCurrentWeatherData = async () => {
   error.value = weather.value = null
   loading.value = true
 
   try {
-    console.log(selectedCity.value)
     const cityData = await getCityData('/cities_20000.csv', selectedCity.value || '')
     if (cityData) {
       const { lat, lon } = cityData
       const data = await weatherService.getCityWeather(lat, lon)
-      console.log({ data })
       weather.value = data
       weatherIconUrl.value = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
     }
