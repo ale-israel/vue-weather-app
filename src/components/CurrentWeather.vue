@@ -3,7 +3,7 @@ import { ref, watch } from 'vue'
 import { Weather } from '../services/weather-service.ts'
 
 const props = defineProps<{
-  weather: Weather
+  weather?: Weather | null
 }>()
 
 const weatherIconUrl = ref(null)
