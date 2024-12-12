@@ -41,17 +41,17 @@ watch(selectedCity, () => fetchCurrentWeatherData(selectedCity))
 </script>
 
 <template>
-  <div class="page">
-    <TabsMenu :tabs="cityTabs" :setSelectedCity="setSelectedCity" />
-    <h1 class="title">{{ selectedCity }}</h1>
-    <div v-if="loading" class="loading">Loading...</div>
-    <div v-if="error" class="error">{{ error }}</div>
-    <div class="current-weather" v-if="weather">
-      <h2>
+  <div class="p-12 flex flex-col justify-start items-center max-w-md mx-auto">
+    <TabsMenu :tabs="cityTabs" :selectedCity="selectedCity" :setSelectedCity="setSelectedCity" />
+    <h1 class="text-2xl font-medium mb-8 w-full text-center">{{ selectedCity }}</h1>
+    <div v-if="loading" class="p-4">Loading...</div>
+    <div v-if="error" class="bg-red-50 rounded p-4 text-red-500">{{ error }}</div>
+    <div class="flex flex-row items-center justify-center" v-if="weather">
+      <h2 class="text-lg font-normal text-gray-800">
         {{ weather.weather[0].main }}
       </h2>
       <img
-        class="icon"
+        class="w-16 h-16"
         v-if="weatherIconUrl"
         :src="weatherIconUrl"
         alt="{{weather.weather[0].main}}"
@@ -59,31 +59,3 @@ watch(selectedCity, () => fetchCurrentWeatherData(selectedCity))
     </div>
   </div>
 </template>
-
-<style>
-.page {
-  min-height: 100vh;
-  display: flex;
-  justify-content: flex-start;
-  flex-direction: column;
-  align-items: center;
-}
-
-.title {
-  margin-bottom: 12px;
-}
-
-.current-weather {
-  background: white;
-  color: black;
-  padding: 6px 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 80%;
-}
-
-.icon {
-  height: 48px;
-}
-</style>
