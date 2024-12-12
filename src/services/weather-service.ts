@@ -1,4 +1,4 @@
-const { WEATHER_API_URL, WEATHER_API_ACCESS_KEY } = process.env
+const { VITE_WEATHER_API_URL, VITE_WEATHER_API_ACCESS_KEY } = import.meta.env
 
 interface Weather {
   coord: {
@@ -112,8 +112,10 @@ interface Forecast {
 
 export const getCityWeather = async (lat: string | number, long: string | number) => {
   try {
-    const url = `${WEATHER_API_URL}/data/2.5/weather` || ''
-    const params = new URLSearchParams(`lat=${lat}&lon=${long}&appid=${WEATHER_API_ACCESS_KEY}`)
+    const url = `${VITE_WEATHER_API_URL}/data/2.5/weather` || ''
+    const params = new URLSearchParams(
+      `lat=${lat}&lon=${long}&appid=${VITE_WEATHER_API_ACCESS_KEY}`,
+    )
     const response = await fetch(`${url}?${params}`)
 
     if (!response.ok) {
@@ -130,8 +132,10 @@ export const getCityWeather = async (lat: string | number, long: string | number
 
 export const getCityForecast = async (lat: string | number, long: string | number) => {
   try {
-    const url = `${WEATHER_API_URL}/data/2.5/forecast` || ''
-    const params = new URLSearchParams(`lat=${lat}&lon=${long}&appid=${WEATHER_API_ACCESS_KEY}`)
+    const url = `${VITE_WEATHER_API_URL}/data/2.5/forecast` || ''
+    const params = new URLSearchParams(
+      `lat=${lat}&lon=${long}&appid=${VITE_WEATHER_API_ACCESS_KEY}`,
+    )
     const response = await fetch(`${url}?${params}`)
 
     if (!response.ok) {
