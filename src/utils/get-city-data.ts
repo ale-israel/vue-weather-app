@@ -12,10 +12,9 @@ interface City {
 
 export const getCityData = async (csvFileUrl: string, city: string) => {
   const data = (await loadCsv(csvFileUrl)) as City[]
-
   const cityData = data.find((csvCity) =>
     (csvCity.city_name as string).toLowerCase().includes(city.toLowerCase()),
   )
-  console.log(city, cityData)
+
   return cityData
 }
