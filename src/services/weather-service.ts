@@ -1,6 +1,6 @@
 const { VITE_WEATHER_API_URL, VITE_WEATHER_API_ACCESS_KEY } = import.meta.env
 
-interface Weather {
+export interface Weather {
   coord: {
     lon: number
     lat: number
@@ -51,7 +51,7 @@ interface Weather {
   cod: number
 }
 
-interface Forecast {
+export interface Forecast {
   cod: string
   message: number
   cnt: number
