@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, watch, watchEffect } from 'vue'
+import { ref, watch } from 'vue'
 import TabsMenu from '../components/TabsMenu.vue'
+import CurrentWeather from '../components/CurrentWeather.vue'
 import weatherService from '../services/weather-service.ts'
 import { getCityData } from '../utils/get-city-data.ts'
 
@@ -36,26 +37,15 @@ const fetchCurrentWeatherData = async () => {
 }
 
 setSelectedCity(cityTabs.value[0])
-watchEffect(() => fetchCurrentWeatherData(cityTabs.value[0]))
-watch(selectedCity, () => fetchCurrentWeatherData(selectedCity))
+watch(selectedCity, () => fetchCurrentWeatherData(selectedCity), { immediate: true })
 </script>
 
 <template>
-  <div class="p-12 flex flex-col justify-start items-center max-w-md mx-auto">
+  <div class="p-12 flex flex-col justify-start items-center max-w-md mx-auto bg-blue-50">
     <TabsMenu :tabs="cityTabs" :selectedCity="selectedCity" :setSelectedCity="setSelectedCity" />
     <h1 class="text-2xl font-medium mb-8 w-full text-center">{{ selectedCity }}</h1>
     <div v-if="loading" class="p-4">Loading...</div>
     <div v-if="error" class="bg-red-50 rounded p-4 text-red-500">{{ error }}</div>
-    <div class="flex flex-row items-center justify-center" v-if="weather">
-      <h2 class="text-lg font-normal text-gray-800">
-        {{ weather.weather[0].main }}
-      </h2>
-      <img
-        class="w-16 h-16"
-        v-if="weatherIconUrl"
-        :src="weatherIconUrl"
-        alt="{{weather.weather[0].main}}"
-      />
-    </div>
+    <CurrentWeather :weather="weather" />
   </div>
 </template>
