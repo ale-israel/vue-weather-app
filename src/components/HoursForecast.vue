@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import SpinnerLoader from '../components/SpinnerLoader.vue'
 import { Forecast } from '../services/weather-service.ts'
 import { kelvinToCelsius } from '../utils/kelvin-to-celsius.ts'
 import { format12HourTime } from '../utils/format-12-hour-time.ts'
@@ -6,6 +7,7 @@ import { format12HourTime } from '../utils/format-12-hour-time.ts'
 defineProps<{
   forecast: Forecast
   loading?: boolean
+  error?: string | null
 }>()
 
 const getWeatherIconUrl = (icon: string) => {
@@ -14,7 +16,10 @@ const getWeatherIconUrl = (icon: string) => {
 </script>
 
 <template>
-  <div v-if="loading">Loading..</div>
+  <div v-if="loading" class="p-4 flex justify-center">
+    <SpinnerLoader />
+  </div>
+  <div v-if="error" class="bg-red-50 rounded p-4 text-red-500">{{ error }}</div>
   <div v-if="forecast" class="flex flex-col">
     <div class="w-full justify-start">
       <h3 class="text-base font-normal text-gray-800">Next hours</h3>

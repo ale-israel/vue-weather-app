@@ -1,9 +1,12 @@
 <script setup lang="ts">
+import SpinnerLoader from '../components/SpinnerLoader.vue'
 import { Weather } from '../services/weather-service.ts'
 import { kelvinToCelsius } from '../utils/kelvin-to-celsius.ts'
 
 defineProps<{
   weather?: Weather | null
+  loading?: boolean
+  error?: string | null
 }>()
 
 const getWeatherIconUrl = (icon: string) => {
@@ -12,9 +15,13 @@ const getWeatherIconUrl = (icon: string) => {
 </script>
 
 <template>
-  <div class="w-24 mx-auto flex flex-col items-center">
+  <div v-if="loading" class="p-4 flex justify-center">
+    <SpinnerLoader />
+  </div>
+  <div v-if="error" class="bg-red-50 rounded p-4 text-red-500">{{ error }}</div>
+  <div class="w-24 mx-auto flex flex-col items-center" v-if="weather">
     <div>
-      <div class="flex flex-row items-center justify-center" v-if="weather">
+      <div class="flex flex-row items-center justify-center">
         <img
           class="w-24 h-24"
           v-if="getWeatherIconUrl(weather.weather[0].icon)"
