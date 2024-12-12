@@ -2,50 +2,90 @@
 import { ref, watch } from 'vue'
 import TabsMenu from '../components/TabsMenu.vue'
 import CurrentWeather from '../components/CurrentWeather.vue'
-import weatherService from '../services/weather-service.ts'
+import HoursForecast from '../components/HoursForecast.vue'
+import SpinnerLoader from '../components/SpinnerLoader.vue'
+import weatherService, { Forecast } from '../services/weather-service.ts'
 import { getCityData } from '../utils/get-city-data.ts'
 
 const cityTabs = ref(['Rio de Janeiro', 'Beijing', 'Los Angeles'])
 
 const selectedCity = ref(null)
-const loading = ref(false)
-const error = ref(null)
+
+const cityData = ref(null)
+
+const weatherLoading = ref(false)
+const weatherError = ref(null)
 const weather = ref(null)
+
+const forecastLoading = ref(false)
+const forecastError = ref(null)
+const forecast = ref<Forecast | null>(null)
+
 const weatherIconUrl = ref(null)
 
 const setSelectedCity = (newCityValue) => {
   selectedCity.value = newCityValue
 }
 
+const setCityData = async () => {
+  const cityDataValue = await getCityData('/cities_20000.csv', selectedCity.value || '')
+  cityData.value = cityDataValue
+}
+
 const fetchCurrentWeatherData = async () => {
-  error.value = weather.value = null
-  loading.value = true
+  weatherError.value = weather.value = null
+  weatherLoading.value = true
 
   try {
-    const cityData = await getCityData('/cities_20000.csv', selectedCity.value || '')
-    if (cityData) {
-      const { lat, lon } = cityData
+    if (cityData.value) {
+      const { lat, lon } = cityData.value
       const data = await weatherService.getCityWeather(lat, lon)
       weather.value = data
       weatherIconUrl.value = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
     }
   } catch (err) {
-    error.value = err.toString()
+    weatherError.value = err.toString()
   } finally {
-    loading.value = false
+    weatherLoading.value = false
+  }
+}
+
+const fetchWeatherForecastData = async () => {
+  forecastError.value = forecast.value = null
+  forecastLoading.value = true
+
+  try {
+    const cityData = await getCityData('/cities_20000.csv', selectedCity.value || '')
+    if (cityData) {
+      const { lat, lon } = cityData
+      const data = await weatherService.getCityForecast(lat, lon)
+      forecast.value = data
+      // forecastIconUrl.value = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
+    }
+  } catch (err) {
+    forecastError.value = err.toString()
+  } finally {
+    forecastLoading.value = false
   }
 }
 
 setSelectedCity(cityTabs.value[0])
-watch(selectedCity, () => fetchCurrentWeatherData(selectedCity), { immediate: true })
+watch(selectedCity, () => setCityData(selectedCity), { immediate: true })
+watch(cityData, () => fetchCurrentWeatherData(), { immediate: true })
+watch(cityData, () => fetchWeatherForecastData(), { immediate: true })
 </script>
 
 <template>
-  <div class="p-12 flex flex-col justify-start items-center max-w-md mx-auto bg-blue-50">
+  <div class="p-12 flex flex-col justify-start items-center rounded max-w-md mx-auto bg-blue-50">
     <TabsMenu :tabs="cityTabs" :selectedCity="selectedCity" :setSelectedCity="setSelectedCity" />
     <h1 class="text-2xl font-medium mb-8 w-full text-center">{{ selectedCity }}</h1>
-    <div v-if="loading" class="p-4">Loading...</div>
-    <div v-if="error" class="bg-red-50 rounded p-4 text-red-500">{{ error }}</div>
+    <div v-if="weatherLoading" class="p-4">
+      <SpinnerLoader />
+    </div>
+    <div v-if="weatherError" class="bg-red-50 rounded p-4 text-red-500">{{ weatherError }}</div>
     <CurrentWeather :weather="weather" />
+    <div class="p-4 w-full bg-white rounded">
+      <HoursForecast :forecast="forecast" />
+    </div>
   </div>
 </template>
