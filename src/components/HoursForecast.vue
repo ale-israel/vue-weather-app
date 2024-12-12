@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Forecast } from '../services/weather-service.ts'
 import { kelvinToCelsius } from '../utils/kelvin-to-celsius.ts'
-import { formatTime } from '../utils/format-12-hour-time.ts'
+import { format12HourTime } from '../utils/format-12-hour-time.ts'
 
 defineProps<{
   forecast: Forecast
@@ -38,7 +38,7 @@ const getWeatherIconUrl = (icon: string) => {
             />
           </div>
           <div class="flex">
-            {{ formatTime(result.dt) }}
+            {{ format12HourTime(result.dt) }}
           </div>
         </div>
       </div>
