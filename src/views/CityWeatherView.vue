@@ -1,23 +1,28 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue'
+import { ref, watch, watchEffect } from 'vue'
+import TabsMenu from '../components/TabsMenu.vue'
 import weatherService from '../services/weather-service.ts'
 import { getCityData } from '../utils/get-city-data.ts'
 
-const selectedCity = ref('Rio de janeiro')
+const cityTabs = ref(['Rio de Janeiro', 'Beijing', 'Los Angeles'])
+
+const selectedCity = ref(null)
 const loading = ref(false)
 const error = ref(null)
 const weather = ref(null)
 const weatherIconUrl = ref(null)
 
-watch(selectedCity, fetchData(selectedCity))
-watch(selectedCity)
+const setSelectedCity = (newCityValue) => {
+  selectedCity.value = newCityValue
+}
 
-async function fetchData(cityName) {
+const fetchCurrentWeatherData = async (cityName) => {
   console.log(cityName)
   error.value = weather.value = null
   loading.value = true
 
   try {
+    console.log(selectedCity.value)
     const cityData = await getCityData('/cities_20000.csv', selectedCity.value || '')
     if (cityData) {
       const { lat, lon } = cityData
@@ -32,11 +37,16 @@ async function fetchData(cityName) {
     loading.value = false
   }
 }
+
+setSelectedCity(cityTabs.value[0])
+watchEffect(() => fetchCurrentWeatherData(cityTabs.value[0]))
+watch(selectedCity, () => fetchCurrentWeatherData(selectedCity))
 </script>
 
 <template>
   <div class="page">
-    <h1>{{ selectedCity }}</h1>
+    <TabsMenu :tabs="cityTabs" :setSelectedCity="setSelectedCity" />
+    <h1 class="title">{{ selectedCity }}</h1>
     <div v-if="loading" class="loading">Loading...</div>
     <div v-if="error" class="error">{{ error }}</div>
     <div class="current-weather" v-if="weather">
@@ -62,9 +72,18 @@ async function fetchData(cityName) {
   align-items: center;
 }
 
+.title {
+  margin-bottom: 12px;
+}
+
 .current-weather {
+  background: white;
+  color: black;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 80%;
 }
 
 .icon {
