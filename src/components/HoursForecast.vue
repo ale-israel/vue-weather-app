@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { Forecast } from '../services/weather-service.ts'
 import { kelvinToCelsius } from '../utils/kelvin-to-celsius.ts'
+import { formatTime } from '../utils/format-12-hour-time.ts'
 
 defineProps<{
   forecast: Forecast
@@ -9,18 +10,6 @@ defineProps<{
 
 const getWeatherIconUrl = (icon: string) => {
   return `https://openweathermap.org/img/wn/${icon}@2x.png`
-}
-</script>
-
-<script lang="ts">
-const formatTime = (timestamp: number) => {
-  const date = new Date(timestamp * 1000)
-  const hours = date.getHours()
-  const minutes = String(date.getMinutes()).padStart(2, '0')
-  const ampm = hours >= 12 ? 'PM' : 'AM'
-  const format12Hours = hours % 12 ? hours % 12 : 12
-
-  return `${format12Hours}:${minutes} ${ampm}`
 }
 </script>
 
